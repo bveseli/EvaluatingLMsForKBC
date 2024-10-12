@@ -1,1 +1,171 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Evaluating Language Models for Knowledge Base Completion</title>
+    <link rel="stylesheet" href="all.css">
+</head>
+
+<body>
+
+<main role="main" id="main" ,="" class="container">
+    <br>
+    <div class="jumbotron" style="text-align: center">
+        <h1 >Evaluating Language Models for Knowledge Base Completion</h1>
+        <a href="https://github.com/bveseli" target="_blank">Blerta Veseli¹</a>,
+        <a href="http://simonrazniewski.com" target="_blank">Sneha Singhania¹</a>,
+        <a href="https://research.vu.nl/en/persons/jan-christoph-kalo" target="_blank">Simon Razniewski²</a>,
+		<a href="https://people.mpi-inf.mpg.de/~weikum/" target="_blank">Gerhard Weikum¹</a><br>
+        <br>
+        <a href="https://www.mpi-inf.mpg.de/departments/computer-vision-and-multimodal-computing/" target="_blank">Max Planck Institute for Informatics¹, Bosch Center for AI²</a>
+        <br><br>ESWC 2023, Crete</a>  <br>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="column">
+            <p class="mb-5"><a class="btn btn-large btn-light" href="https://arxiv.org/pdf/2303.11082" target="_blank">Paper</a></p>
+		</div>
+		<div class="column">
+            <p class="mb-5"><a class="btn btn-large btn-light" href="https://github.com/bveseli/LMsForKBC/tree/main/data/WD_Known" target="_blank">Dataset</a></p>
+		</div>
+		<div class="column">
+            <p class="mb-5"><a class="btn btn-large btn-light" href="" target="_blank">Code</a></p>
+		</div>
+	</div>
+
+
+
+
+  <div class="row">
+    <div class="col-12 col-md-12">
+
+        <h2 style="text-align:center">Intro</h2>
+        <p class="text-justify">
+            The goal of this work is to realistically assess if and how Language Models (LMs) can help to complete Knowledge Bases (KBs).
+            We propose the new benchmark Wikidata-known (WD-Known), which focuses on long-tail entities. To the best of our knowledge,
+            we are the first to test a LMs ability to predict completely new facts, i.e. facts that are yet not present in a given KB (Wikidata).
+        </p>
+        <figure style="text-align:center">
+            <img  src="photo/overview.jpg" width="60%" class="img-responsive">
+        </figure>
+        <p class="text-justify">
+            <strong>Knowledge Bases</strong> (KBs) store information as triples in the format (subject, relation, object), focusing on correctness and completeness.
+            For evaluation, we used <strong>Wikidata</strong>, a large collaborative KB containing 3.9 billion triples and 100 million entities.
+            <strong>Language Models</strong> (LMs) are deep neural networks trained on large, unlabeled text corpora to predict words or sentences. Since they are pre-trained on massive datasets, including Wikipedia, LMs implicitly contain vast amounts of knowledge.
+            Recently, LMs have been proposed as a tool for unsupervised knowledge extraction, leveraging their pre-trained knowledge without the need for labeled data.
+        </p>
+    </div>
+ </div>
+ 
+ 
+ <div class="row">
+    <div class="col-12 col-md-12">
+	   <h4 style="text-align:center">
+	   Method
+	   	</h4>
+       <figure style="text-align:center">
+       <img  src="photo/method.png" width="100%" class="img-responsive">
+       </figure>
+        <p class="text-justify">
+            Following the idea by <a href="https://arxiv.org/pdf/1909.01066" target="_blank" style="color:#4C4646;">Petroni et al.</a> we prompt the LM by using hand-crafted templates
+            for each relation and masking the object. The output is a probability vector over the model's vocabulary. From this vector the top-k predictions with the highest probabilities
+            are selected as predictions for the objects. Optionally, the LLM can be finetuned with a set of seed facts. The top-k predictions are then mapped to KB entities by using KB alias names.
+        </p>
+   </div>
+ </div>
+
+    <div class="row">
+    <div class="col-12 col-md-12">
+	   <h4 style="text-align:center">
+	   Dataset
+	   	</h4>
+        <p class="text-justify">
+            Wikidata-Known is a uniform sample of Wikidata. For each of 41 relations, we have sampled around 100,000 subjects,
+            and their associated objects. In total, the Wikidata-Known benchmark contains 3.9M triples.
+
+        </p>
+       <figure style="text-align:center">
+            <img  src="photo/wd_known_2.png" width="50%" class="img-responsive">
+       </figure>
+        <p class="text-justify">
+            We show some important statistics about our benchmark and compare it with the LAMA dataset by <a href="https://arxiv.org/pdf/1909.01066" target="_blank" style="color:#4C4646;">Petroni et al.</a>.
+            Our WD-Known dataset in comparison to LAMA-T-REx. We report the total number of distinct objects (#unique objects),
+            distinct subjects (#unique subjects), and the number of triples (#triples) as well as the total number of objects consisting
+            of more than one token (#multi-token objects), and the average object entropy.
+        </p>
+        <figure style="text-align:center">
+            <img  src="photo/wd_known_longtail.png" width="50%" class="img-responsive">
+        </figure>
+        <p class="text-justify">
+            This table shows some popularity measures we computed. It shows that on average the entities in LAMA have much more ingoing- and outgoing-links,
+            as well as much longer Wikipedia Pages compared to WD-Known
+        </p>
+    </div>
+    </div>
+
+ <div class="row">
+    <div class="col-12 col-md-12">
+	   <h4 style="text-align:center">
+	   Results
+	   	</h4>
+        <p class="text-justify">
+            The results for the top 10 performing relations show that recall is viable for language-related relations but degrades significantly for others.
+            Compared to the LAMA benchmark, our evaluation reveals that previous benchmarks are biased toward easier cases.
+            A more realistic benchmark exposes the limitations and challenges of using Language Models for KB completion.
+        </p>
+       <figure style="text-align:center">
+        <img  src="photo/automatic_eval.png" width="40%" class="img-responsive">
+       </figure>
+        <p class="text-justify">
+            Our benchmark involves withholding objects from known KB triples, but in real applications, we aim for Language Models to generate new facts not present in the KB.
+            To evaluate this, we manually assessed out-of-KB predictions using Amazon Mechanical Turk, where workers rated facts on a five-value scale.
+        </p>
+        <p class="text-justify">
+            This table shows the results for a subset of seven salient relations. For example, Wikidata currently contains 260K triples for the relation <strong>nativeLanguage</strong>.
+            In all of Wikidata, there are 7.8M entities of type human that are not annotated with that relation. Since for this relation we get predictions above a certain (see <a href="https://arxiv.org/pdf/2303.11082" target="_blank" style="color:#4C4646;">paper</a>)
+            threshold for 86% of the facts and the annotators evaluate 82% of the facts presented to them as correct, we can add 5.5M triples to Wikidata. This means we could extend
+            relation <strong>nativeLanguage</strong> by a factor of 21.
+
+
+        </p>
+       <figure style="text-align:center">
+            <img  src="photo/manual_eval.png" width="50%" class="img-responsive">
+       </figure>
+   </div>
+ </div>
+
+     <div class="jumbotron">
+        <div class="col-12 col-md-12">
+           <h4 style="text-align:center">
+           Conclusion
+            </h4>
+            <p>
+                <ol>
+                  <li>We propose <strong>new benchmark</strong> for KB Completion by LMs.</li>
+                  <li>Realistic benchmarks <strong>reveal limitations and challenges</strong> of LMs for KBC.</li>
+                  <li>Prediction quality is high for <strong>language and socio-demographic relations</strong>.</li>
+                    <ol>
+                        <li>Relation <strong>nativeLanguage</strong> can be expanded by a factor of 21 (from 260k to 5.8M)</li>
+                        <li>Relation <strong>spokenLanguage</strong> can be expanded by a factor of 3 (from 2.1M to 6.6M).</li>
+                        <li>Relation <strong>citizenOf</strong> can be expanded by a factor of 1.3 (from 4.2M to 5.3M).</li>
+                    </ol>
+                </ol>
+
+            </p>
+       </div>
+     </div>
+
+
+    <h2>Citation</h2>
+    <pre class="bg-light" style="padding: 5px 10.5px;">@inproceedings{veseli2023emnlp,
+    title = {Evaluating Language Models for Knowledge Base Completion},
+    author = {Veseli, Blerta and Singhania, Sneha and Razniewski, Sneha and Weikum, Gerhard},
+    booktitle = {Extended Semantic Web Conference ({ESWC})},
+    month = {December},
+    year = {2023},
+}</pre>
+</main>
+
+
+
+</body></html>
